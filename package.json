@@ -1,0 +1,28 @@
+{
+  "name": "keycipher",
+  "version": "0.1.0",
+  "description": "A utility package for encrypting and decrypting text using AES-GCM with a secret key.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imparth7/keycipher-js.git"
+  },
+  "author": "imparth",
+  "license": "ISC",
+  "keywords": [
+    "encryption",
+    "decryption",
+    "crypto",
+    "aes-gcm",
+    "node",
+    "webcrypto"
+  ],
+  "bugs": {
+    "url": "https://github.com/imparth7/keycipher-js/issues"
+  },
+  "homepage": "https://github.com/imparth7/keycipher-js#readme",
+  "dependencies": {}
+}
