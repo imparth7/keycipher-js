@@ -53,7 +53,8 @@ const { decryptData } = require('keycipher');
         const keyString = 'your-secret-key'; // Replace with your key
         const encryptedData = {
             iv: '...your IV...',
-            cipherText: '...your cipherText...'
+            cipherText: '...your cipherText...',
+            tag: '...your tag...'
         }; // Replace with your generated encryption object
 
         const decryptedText = await decryptData(encryptedData, keyString);
@@ -75,14 +76,14 @@ Encrypts the given plaintext using the provided key string.
   - `plainText` (String): The text to be encrypted.
   - `key` (String): The key used for encryption.
   
-- **Returns:** An object containing `iv` and `cipherText`.
+- **Returns:** An object containing `iv`, `cipherText` and `tag`.
 
 ### `decryptData(encryptedData, key)`
 
 Decrypts the given encrypted data using the provided key string.
 
 - **Arguments:**
-  - `encryptedData` (Object): The encrypted data object, which includes `iv` and `cipherText`.
+  - `encryptedData` (Object): The encrypted data object, which includes `iv`, `cipherText` and `tag`.
   - `key` (String): The key used for decryption.
 
 - **Returns:** The decrypted text.

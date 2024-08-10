@@ -1,6 +1,6 @@
 {
   "name": "keycipher",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "A utility package for encrypting and decrypting text using AES-GCM with a secret key.",
   "main": "index.js",
   "scripts": {

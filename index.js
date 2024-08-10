@@ -39,48 +39,62 @@ async function createKeyFromString(keyString) {
 
 // Encrypt function
 async function encryptData(plainText, keyString) {
-    const key = await createKeyFromString(keyString);
+    try {
+        const key = await createKeyFromString(keyString);
 
-    const encoder = new TextEncoder();
-    const data = encoder.encode(plainText);
+        const encoder = new TextEncoder();
+        const data = encoder.encode(plainText);
 
-    const iv = crypto.getRandomValues(new Uint8Array(12));
+        const iv = crypto.getRandomValues(new Uint8Array(12));
 
-    const cipherText = await crypto.subtle.encrypt(
-        {
-            name: "AES-GCM",
-            iv: iv,
-        },
-        key,
-        data
-    );
+        const cipherText = await crypto.subtle.encrypt(
+            {
+                name: "AES-GCM",
+                iv: iv,
+            },
+            key,
+            data
+        );
 
-    return {
-        iv: bufferToHex(iv),
-        cipherText: bufferToHex(cipherText),
-    };
+        const tag = cipherText.slice(-16); // Authentication tag
+        const encryptedBytes = cipherText.slice(0, -16); // Cipher text without tag
+
+        return {
+            iv: bufferToHex(iv),
+            cipherText: bufferToHex(encryptedBytes),
+            tag: bufferToHex(tag),
+        };
+    } catch (error) {
+        throw new Error(`Encryption failed: ${error.message}`);
+    }
 }
 
 // Decrypt function
 async function decryptData(encryptedData, keyString) {
-    const key = await createKeyFromString(keyString);
+    try {
+        const key = await createKeyFromString(keyString);
 
-    const { iv, cipherText } = encryptedData;
+        const iv = hexToBuffer(encryptedData.iv);
+        const cipherText = hexToBuffer(encryptedData.cipherText);
+        const tag = hexToBuffer(encryptedData.tag);
 
-    const ivBuffer = hexToBuffer(iv);
-    const cipherTextBuffer = hexToBuffer(cipherText);
+        const cipherTextWithTag = new Uint8Array([...new Uint8Array(cipherText), ...new Uint8Array(tag)]);
 
-    const decryptedData = await crypto.subtle.decrypt(
-        {
-            name: "AES-GCM",
-            iv: ivBuffer,
-        },
-        key,
-        cipherTextBuffer
-    );
+        const decryptedData = await crypto.subtle.decrypt(
+            {
+                name: "AES-GCM",
+                iv: iv,
+                tagLength: 128,
+            },
+            key,
+            cipherTextWithTag
+        );
 
-    const decoder = new TextDecoder();
-    return decoder.decode(decryptedData);
+        const decoder = new TextDecoder();
+        return decoder.decode(decryptedData);
+    } catch (error) {
+        throw new Error(`Decryption failed: ${error.message}`);
+    }
 }
 
 module.exports = { encryptData, decryptData };
